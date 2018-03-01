@@ -158,7 +158,7 @@ public class ConsumidorController {
             if(usuario.getStatus() == 1){
                 
                 //Faz o Login
-                usuario = lDAO.loginConsumidor(usuario);
+                consumidor = lDAO.loginConsumidor(usuario);
                 
                 if(usuario != null){
                     

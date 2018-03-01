@@ -39,6 +39,8 @@ public class ConsumidorDAO {
     private static final String CADASTRAR_NOTIFICACOES_PENDENTES = "INSERT into notificacoes_pendentes (id_usuario, tipo_notificacao) VALUES (?, ?)";
     private static final String CONSULTAR_QUANTIDADE_CONSUMIDORES = "SELECT COUNT (nome) FROM consumidor";
     
+    
+    
     /**
      * Método construtor da classe ConsumidorDAO.
      * @throws SQLException
@@ -47,6 +49,8 @@ public class ConsumidorDAO {
     public ConsumidorDAO() throws SQLException, ClassNotFoundException{
         this.conexao = new ConexaoPostgreJDBC();
     }
+    
+    
     
     /**
      * Método responsável por criar uma instância da classe ConsumidorDAO (Singleton Pattern).
@@ -61,6 +65,8 @@ public class ConsumidorDAO {
         }
         return instance;
     }
+    
+    
     
     /**
      * Método responsável por verificar se já existe no Banco de Dados, o e-mail que o usuário Consumidor está inserindo.
@@ -94,6 +100,8 @@ public class ConsumidorDAO {
         
     }
 
+    
+    
     /**
      * Método responsável por verificar se já existe no Banco de Dados, o cpf que o usuário Consumidor está inserindo.
      * @param consumidor
@@ -126,6 +134,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por cadastrar o usuário Consumidor no Banco de Dados.
      * @param consumidor
@@ -191,6 +201,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por cadastrar o endereço do usuário Consumidor.
      * @param consumidor
@@ -237,6 +249,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por consultar os dados do usuário Consumidor.
      * @param consumidor
@@ -281,6 +295,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por consultar os endereços cadastrados pelo usuário Consumidor.
      * @param consumidor
@@ -324,6 +340,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por atualizar os dados do usuário Consumidor.
      * @param consumidor
@@ -358,6 +376,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por verificar o novo e-mail que o usuário Consumidor está alterando.
      * @param consumidor
@@ -391,6 +411,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por atualizar o novo e-mail do usuário Consumidor.
      * @param consumidor
@@ -424,6 +446,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por fazer a verificação da nova senha que o usuário Consumidor está alterando.
      * @param consumidor
@@ -458,6 +482,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por atualizar a nova senha do usuário Consumidor.
      * @param consumidor
@@ -491,6 +517,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por desativar a conta do usuário Consumidor.
      * @param consumidor
@@ -523,6 +551,8 @@ public class ConsumidorDAO {
 
     }
 
+    
+    
     /**
      * Método responsável por cadastrar os códigos de notificações que ainda não foram enviadas ao usuário Consumidor devido a erros no servidor.
      * @param consumidor
@@ -553,6 +583,8 @@ public class ConsumidorDAO {
         
     }
 
+    
+    
     /**
      * Método responsável por consultar a quantidade de usuários Consumidores para serem apresentados no painel do usuário Administrador.
      * @return consumidor
