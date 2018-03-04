@@ -189,8 +189,7 @@ public class ConsumidorDAO {
                 consumidor = null;
             }
             
-            conexao.commit();
-            
+            conexao.commit(); 
         }catch(SQLException e){
             consumidor = null;
             conexao.rollback();
@@ -198,7 +197,6 @@ public class ConsumidorDAO {
         }
 
         return consumidor;
-
     }
 
     
