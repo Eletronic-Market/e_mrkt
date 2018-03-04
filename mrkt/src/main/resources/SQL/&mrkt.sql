@@ -5,7 +5,6 @@
 
 create extension pgcrypto;
 
-/*Table Usuario*/
 create table usuario(
     id_usuario serial NOT NULL,
     email character varying(100) NOT NULL,
@@ -17,7 +16,6 @@ create table usuario(
     CONSTRAINT usuario_email_key UNIQUE (email)
 );
 
-/*Table Endereço*/
 create table endereco(
     id_endereco serial NOT NULL,
     cep character varying(10) NOT NULL,
@@ -31,7 +29,6 @@ create table endereco(
     CONSTRAINT endereco_pkey PRIMARY KEY (id_endereco)
 );
 
-/*Table Documento Pessoa Física*/
 create table documento_pf(
     id_documento_pf serial NOT NULL,
     cpf character varying(15) NOT NULL,
@@ -39,7 +36,6 @@ create table documento_pf(
     CONSTRAINT documento_pf_pkey PRIMARY KEY (id_documento_pf)
 );
 
-/*Table Administrador*/
 create table administrador(
     id_administrador serial NOT NULL,
     nome character varying(20) NOT NULL,
@@ -50,7 +46,6 @@ create table administrador(
     CONSTRAINT administrador_fkey FOREIGN KEY (usuario) REFERENCES usuario (id_usuario)
 );
 
-/*Table Consumidor*/
 create table consumidor(
     id_cliente serial NOT NULL,
     nome character varying(20) NOT NULL,
@@ -65,7 +60,6 @@ create table consumidor(
     CONSTRAINT cliente_documento_fkey FOREIGN KEY (documento_pf) REFERENCES documento_pf (id_documento_pf)
 );
 
-/*Table Supermercado*/
 create table supermercado(
     id_supermercado serial NOT (NULL,
     cnpj character varying(50) NOT NULL,
@@ -91,12 +85,10 @@ create table registro_supermercado(
     CONSTRAINT registro_pkey PRIMARY KEY (id_registro)
 );
 
-/*Table Transportadora*/
 create table transportadora(
     id_transportadora serial NOT NULL,
 );
 
-/*Table Receitas*/
 create table receita(
     id_receita serial NOT NULL,
 );
