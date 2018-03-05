@@ -2,6 +2,7 @@ package br.com.mrkt.dao;
 
 import br.com.mrkt.factory.ConexaoJDBC;
 import br.com.mrkt.factory.ConexaoPostgreJDBC;
+import br.com.mrkt.model.Informacoes;
 import br.com.mrkt.model.Produto;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +21,9 @@ public class AnaliseDAO {
     private static final String CONSULTAR_MAIS_CLICADOS = "SELECT SUM (quantidade) quantidade, id_produto, codigo_barra, descricao FROM itens_lista, produtos WHERE produto = id_produto GROUP BY id_produto ORDER BY quantidade DESC LIMIT 5";
     private static final String CONSULTAR_QUANTIDADE_PRODUTOS = "SELECT COUNT (descricao) FROM produto WHERE supermercado_id = ?";
     private static final String CONSULTAR_QUANTIDADE_PRODUTOS_GERAL = "SELECT COUNT (descricao) FROM analise_produto";
+    private static final String CONSULTAR_QUANTIDADE_CONSUMIDORES_CADASTRADOS = "SELECT COUNT (nome) FROM consumidor";
+    private static final String CONSULTAR_QUANTIDADE_CONSUMIDORES_ATIVOS = "SELECT COUNT (nome) FROM consumidor";
+    
     
     
     
@@ -146,4 +150,43 @@ public class AnaliseDAO {
         
         return produto;
     }
+    
+    
+    
+    
+    
+    /**
+     * Método responsável por consultar a quantidade de usuários Consumidores para serem apresentados no painel do usuário Administrador.
+     * @return consumidor
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public Informacoes consultarQuantidade() throws  SQLException, ClassNotFoundException{
+        
+        Informacoes informacoes = new Informacoes();
+
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(CONSULTAR_QUANTIDADE_CONSUMIDORES_CADASTRADOS);
+            pstmt.executeQuery();
+
+            ResultSet rs = pstmt.getResultSet();
+
+            if(rs.next()){
+                informacoes.setQuantidadeUsuariosConsumidores(rs.getInt(1));
+            }else{
+                informacoes = null;
+            }
+            
+            conexao.close();
+            
+        }catch (SQLException e) {
+            informacoes = null;
+            conexao.close();
+            throw new RuntimeException(e);
+        }
+
+        return informacoes;
+
+    }
+    
 }

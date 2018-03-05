@@ -17,11 +17,12 @@ public class Consumidor {
     private ArrayList enderecos = new ArrayList();
     private DocumentoPF documentoPF;
     private NotificacoesPendentes notificacoesPendentes;
+    private PreferenciasConsumidor preferenciasConsumidor;
 
     public Consumidor() {
     }
 
-    public Consumidor(int idConsumidor, String nome, String sobrenome, Usuario usuario, Endereco endereco, DocumentoPF documentoPF, NotificacoesPendentes notificacoesPendentes) {
+    public Consumidor(int idConsumidor, String nome, String sobrenome, Usuario usuario, Endereco endereco, DocumentoPF documentoPF, NotificacoesPendentes notificacoesPendentes, PreferenciasConsumidor preferenciasConsumidor) {
         this.idConsumidor = idConsumidor;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -29,6 +30,7 @@ public class Consumidor {
         this.endereco = endereco;
         this.documentoPF = documentoPF;
         this.notificacoesPendentes = notificacoesPendentes;
+        this.preferenciasConsumidor = preferenciasConsumidor;
     }
 
     public int getIdConsumidor() {
@@ -93,6 +95,14 @@ public class Consumidor {
 
     public void setNotificacoesPendentes(NotificacoesPendentes notificacoesPendentes) {
         this.notificacoesPendentes = notificacoesPendentes;
+    }
+
+    public PreferenciasConsumidor getPreferenciasConsumidor() {
+        return preferenciasConsumidor;
+    }
+
+    public void setPreferenciasConsumidor(PreferenciasConsumidor preferenciasConsumidor) {
+        this.preferenciasConsumidor = preferenciasConsumidor;
     }
     
 }

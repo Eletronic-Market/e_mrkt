@@ -3,6 +3,7 @@ package br.com.mrkt.dao;
 import br.com.mrkt.factory.ConexaoJDBC;
 import br.com.mrkt.factory.ConexaoPostgreJDBC;
 import br.com.mrkt.model.Anuncio;
+import br.com.mrkt.model.Consumidor;
 import br.com.mrkt.model.Supermercado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,6 +28,8 @@ public class AnuncioDAO {
     private static final String VALIDACAO_ANUNCIO = "UPDATE anuncio SET situacao = 1 WHERE id_anuncio = ?";
     private static final String INVALIDAR_ANUNCIO = "UPDATE anuncio SET situacao = 0 WHERE id_anuncio = ?";
     private static final String CONSULTAR_QUANTIDADE_ANUNCIOS =  "SELECT COUNT (anuncio) FROM anuncio";    
+    private static final String RECUPERAR_ANUNCIOS_COMPATIVEIS_COM_PREFERENCIAS_CONSUMIDOR = "SELECT * FROM anuncio a JOIN preferencias p ON p.preferencia = a.familia WHERE p.consumidor = ? AND a.situacao<>0";
+    
     
     
     
@@ -294,4 +297,34 @@ public class AnuncioDAO {
         }
         return anuncios;
     }
+    
+    
+    
+    /**
+     * Método responsável por recuperar os anuncios direcionados ao usuárui Consumidor de acordo com as suas preferências.
+     * @param preferencia
+     * @return ArrayList <Anuncio> anuncios
+     * @throws SQLException 
+     */
+    public ArrayList<Anuncio> listar_preferencia_cliente(Consumidor consumidor) throws SQLException{
+        
+        ArrayList<Anuncio> anuncios = new ArrayList<>();
+    
+        PreparedStatement pstmt = conexao.getConnection().prepareStatement(RECUPERAR_ANUNCIOS_COMPATIVEIS_COM_PREFERENCIAS_CONSUMIDOR);
+        pstmt.setInt(1, consumidor.getIdConsumidor());
+        ResultSet rs = pstmt.executeQuery();
+        
+        while(rs.next()){
+            Anuncio listaAnuncios = new Anuncio();
+            listaAnuncios.setIdAnuncio(rs.getInt("id_anuncio"));
+            listaAnuncios.setAnuncio(rs.getString("anuncio"));
+            listaAnuncios.setContador(rs.getInt("contador"));
+            anuncios.add(listaAnuncios);
+        }
+        return anuncios;
+    }
+    
+    
+    
+    
 }

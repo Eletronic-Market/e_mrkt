@@ -16,12 +16,11 @@ public class PreferenciasConsumidor {
     private int camping;
     private int jardinagem;
     private int petshop;
-    private Consumidor consumidor;
 
     public PreferenciasConsumidor() {
     }
 
-    public PreferenciasConsumidor(int idPreferencia, int bebidasAlcoolicas, int tabaco, int carnes, int vegano, int naturais, int automotivos, int camping, int jardinagem, int petshop, Consumidor consumidor) {
+    public PreferenciasConsumidor(int idPreferencia, int bebidasAlcoolicas, int tabaco, int carnes, int vegano, int naturais, int automotivos, int camping, int jardinagem, int petshop) {
         this.idPreferencia = idPreferencia;
         this.bebidasAlcoolicas = bebidasAlcoolicas;
         this.tabaco = tabaco;
@@ -32,7 +31,6 @@ public class PreferenciasConsumidor {
         this.camping = camping;
         this.jardinagem = jardinagem;
         this.petshop = petshop;
-        this.consumidor = consumidor;
     }
 
     public int getIdPreferencia() {
@@ -113,14 +111,6 @@ public class PreferenciasConsumidor {
 
     public void setPetshop(int petshop) {
         this.petshop = petshop;
-    }
-
-    public Consumidor getConsumidor() {
-        return consumidor;
-    }
-
-    public void setConsumidor(Consumidor consumidor) {
-        this.consumidor = consumidor;
     }
     
 }

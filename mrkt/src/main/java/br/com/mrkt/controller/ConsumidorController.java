@@ -18,7 +18,6 @@ import javax.ws.rs.WebApplicationException;
 import java.sql.SQLException;
 
 import br.com.mrkt.dao.ConsumidorDAO;
-import br.com.mrkt.dao.LoginDAO;
 import br.com.mrkt.model.Consumidor;
 import br.com.mrkt.model.DocumentoPF;
 import br.com.mrkt.model.Endereco;
@@ -145,22 +144,23 @@ public class ConsumidorController {
         
         try{
             
-            LoginDAO lDAO = LoginDAO.getInstance();
+            ConsumidorDAO cDAO = ConsumidorDAO.getInstance();
             
             Usuario usuario = new Usuario();
             usuario.setEmail(email);
             usuario.setSenha(senha);
             
-            usuario = lDAO.consultarStatusConsumidor(usuario);
-            
             Consumidor consumidor = new Consumidor();
+            consumidor.setUsuario(usuario);
             
-            if(usuario.getStatus() == 1){
+            consumidor = cDAO.verificarStatusConsumidor(consumidor);
+
+            if(consumidor.getUsuario().getStatus() == 1){
                 
                 //Faz o Login
-                consumidor = lDAO.loginConsumidor(usuario);
+                consumidor = cDAO.loginUsuarioConsumidor(consumidor);
                 
-                if(usuario != null){
+                if(consumidor != null){
                     
                     //TO DO - Anuncios Direcionados
 
@@ -175,9 +175,9 @@ public class ConsumidorController {
             }else{
                 
                 //Faz a reativação da conta
-                usuario = lDAO.reativarUsuario(usuario);
+                consumidor = cDAO.reativarUsuarioConsumidor(consumidor);
                 
-                if(usuario == null){
+                if(consumidor == null){
                     
                     // Informar que houve um erro ao reativar a conta.
                     consumidor.setUsuario(usuario);

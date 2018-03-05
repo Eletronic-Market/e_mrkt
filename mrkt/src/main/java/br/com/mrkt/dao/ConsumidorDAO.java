@@ -4,7 +4,6 @@ import br.com.mrkt.factory.ConexaoJDBC;
 import br.com.mrkt.factory.ConexaoPostgreJDBC;
 import br.com.mrkt.model.Consumidor;
 import br.com.mrkt.model.Endereco;
-import br.com.mrkt.model.Informacoes;
 import br.com.mrkt.model.Usuario;
 
 import java.sql.PreparedStatement;
@@ -28,6 +27,11 @@ public class ConsumidorDAO {
     private static final String CADASTRAR_DADOS_CONSUMIDOR = "INSERT INTO consumidor (nome, sobrenome, usuario, documento_pf) VALUES (?, ?, ?, ?)";
     private static final String CADASTRAR_ENDERECO_CONSUMIDOR = "INSERT INTO endereco (estado, cidade, bairro, cep, rua, numero) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String CADASTRAR_DADOS_ENDERECO_CONSUMIDOR = "INSERT INTO consumidor (endereco) VALUES (?) WHERE id_consumidor = ?";
+    private static final String VERIFICAR_EXISTENCIA_USUARIO_CONSUMIDOR = "SELECT email, senha FROM usuario WHERE email = ? AND senha = CRYPT(?, senha)";
+    private static final String VERIFICAR_STATUS_CONSUMIDOR = "SELECT status FROM usuario WHERE email = ?";
+    private static final String INGRESSAR_USUARIO_CONSUMIDOR = "SELECT id_consumidor, nome, sobrenome, usuario, id_usuario FROM consumidor, usuario WHERE id_usuario = ? AND usuario = id_usuario AND tipo_usuario = 1";
+    private static final String REVALIDAR_STATUS_USUARIO_CONSUMIDOR = "UPDATE usuario SET status = 1 WHERE email = ? AND senha = CRYPT(?, senha)";
+    private static final String CADASTRAR_PREFERENCIAS_CONSUMIDOR = "INSERT INTO preferencias (consumidor, preferencia) VALUES (?, ?)";  
     private static final String CONSULTAR_CONSUMIDOR_POR_ID = "SELECT c.id_consumidor, c.nome, c.sobrenome, c.endereco, u.email, u.id_usuario FROM consumidor AS c, usuario AS u WHERE c.id_consumidor = ? AND u.id_usuario = c.usuario";
     private static final String CONSULTAR_ENDERECO_CONSUMIDOR = "SELECT * FROM endereco WHERE id_endereco = ?";
     private static final String ATUALIZAR_DADOS_CONSUMIDOR = "UPDATE consumidor SET nome = ?, sobrenome = ? WHERE id_consumidor = ?";
@@ -37,7 +41,6 @@ public class ConsumidorDAO {
     private static final String ATUALIZAR_SENHA_CONSUMIDOR = "UPDATE usuario SET senha = CRYPT(?, gen_salt('bf',8)) WHERE id_usuario = ?";
     private static final String DESATIVAR_CONSUMIDOR = "UPDATE usuario SET status = 0 WHERE id_usuario = ?";
     private static final String CADASTRAR_NOTIFICACOES_PENDENTES = "INSERT into notificacoes_pendentes (id_usuario, tipo_notificacao) VALUES (?, ?)";
-    private static final String CONSULTAR_QUANTIDADE_CONSUMIDORES = "SELECT COUNT (nome) FROM consumidor";
     
     
     
@@ -246,7 +249,203 @@ public class ConsumidorDAO {
         return consumidor;
 
     }
+    
+    
+    
+    /**
+     * Método responsável por verificar a existência dos dados que o usuário Consumidor está entrando.
+     * @param consumidor
+     * @return consumidor
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public Consumidor verificarExistenciaUsuarioConsumidor(Consumidor consumidor) throws SQLException, ClassNotFoundException{
 
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(VERIFICAR_EXISTENCIA_USUARIO_CONSUMIDOR);
+            pstmt.setString(1, consumidor.getUsuario().getEmail());
+            pstmt.setString(2, consumidor.getUsuario().getSenha());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+
+                consumidor.getUsuario().setEmail(rs.getString("email"));
+                consumidor.getUsuario().setSenha(rs.getString("senha"));
+                
+            }else{
+                consumidor = null;
+            }
+            
+            conexao.close();
+        }catch (RuntimeException e){
+            consumidor = null;
+            conexao.close();
+            throw new RuntimeException (e);
+        }
+
+        return consumidor;
+    }
+    
+    
+    
+    /**
+     * Método responsável por consultar o status do usuário Consumidor.
+     * @param consumidor
+     * @return consumidor
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public Consumidor verificarStatusConsumidor(Consumidor consumidor) throws SQLException, ClassNotFoundException{
+        
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(VERIFICAR_STATUS_CONSUMIDOR);
+            pstmt.setString(1, consumidor.getUsuario().getEmail());
+            
+            ResultSet rs = pstmt.executeQuery();
+            
+            if(rs.next()){
+                consumidor.getUsuario().setStatus(rs.getInt("status"));
+            }else{
+                consumidor = null;
+            }
+            
+            conexao.close();
+        }catch(SQLException e){
+            consumidor = null;
+            conexao.close();
+            throw new RuntimeException (e);
+        }
+        
+        return consumidor;
+    }
+    
+    
+    
+    /**
+     * Método responsável por efetuar o login do usuário Consumidor.
+     * @param consumidor
+     * @return consumidor
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public Consumidor loginUsuarioConsumidor(Consumidor consumidor) throws SQLException, ClassNotFoundException{
+        
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(INGRESSAR_USUARIO_CONSUMIDOR);
+            pstmt.setInt(1, consumidor.getUsuario().getIdUsuario());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if(rs.next()){
+
+                consumidor.setIdConsumidor(rs.getInt("id_consumidor"));
+                consumidor.setNome(rs.getString("nome"));
+                consumidor.setSobrenome(rs.getString("sobrenome"));
+
+            }else{
+                consumidor = null;
+            }
+            
+            conexao.close();
+        }catch (RuntimeException e){
+            consumidor = null;
+            conexao.close();
+            throw new RuntimeException (e);
+        }
+
+        return consumidor;
+    }
+    
+    
+    
+    /**
+     * Método responsável por revalidar o status do usuário Consumidor.
+     * @param consumidor
+     * @return consumidor
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
+    public Consumidor reativarUsuarioConsumidor(Consumidor consumidor) throws SQLException, ClassNotFoundException{
+        
+        int linhasAfetadas = 0;
+        
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(REVALIDAR_STATUS_USUARIO_CONSUMIDOR);
+            pstmt.setString(1, consumidor.getUsuario().getEmail());
+            pstmt.setString(2, consumidor.getUsuario().getSenha());
+
+            linhasAfetadas = pstmt.executeUpdate();
+
+            if(linhasAfetadas == 1){
+
+                consumidor.getUsuario().setEmail(consumidor.getUsuario().getEmail());
+                this.conexao.commit();
+
+            }else{
+
+                consumidor = null;
+                conexao.rollback();
+
+            }
+            
+        }catch (RuntimeException e){
+            consumidor = null;
+            conexao.rollback();
+            throw new RuntimeException (e);
+        }
+        
+        return consumidor;
+    }
+    
+    
+    
+    /**
+     * Método responsável por cadastrar as preferências do usuário Consumidor.
+     * @param consumidor
+     * @return consumidor
+     * @throws SQLException 
+     */
+    public Consumidor cadastrarPreferencias(Consumidor consumidor) throws SQLException{
+        
+        int listaPreferencias[];
+        listaPreferencias = new int[9];
+        listaPreferencias[0] = consumidor.getPreferenciasConsumidor().getTabaco();
+        listaPreferencias[1] = consumidor.getPreferenciasConsumidor().getBebidasAlcoolicas();
+        listaPreferencias[2] = consumidor.getPreferenciasConsumidor().getCarnes();
+        listaPreferencias[3] = consumidor.getPreferenciasConsumidor().getNaturais();
+        listaPreferencias[4] = consumidor.getPreferenciasConsumidor().getVegano();
+        listaPreferencias[5] = consumidor.getPreferenciasConsumidor().getAutomotivos();
+        listaPreferencias[6] = consumidor.getPreferenciasConsumidor().getCamping();
+        listaPreferencias[7] = consumidor.getPreferenciasConsumidor().getJardinagem();
+        listaPreferencias[8] = consumidor.getPreferenciasConsumidor().getPetshop();
+        
+        try{
+            PreparedStatement pstmt = conexao.getConnection().prepareStatement(CADASTRAR_PREFERENCIAS_CONSUMIDOR);
+            
+            ResultSet rs = null;
+            
+            for(int i = 0; i < listaPreferencias.length; i++){
+                
+                pstmt.setInt(1, consumidor.getIdConsumidor());
+                pstmt.setInt(2, listaPreferencias[i]);
+                
+                rs = pstmt.executeQuery();
+                
+            }
+            
+            if(rs.next()){
+                conexao.commit();
+            }
+        }catch (Exception e){
+            consumidor = null;
+            conexao.rollback();
+            throw new RuntimeException(e);
+        }
+        
+        return consumidor;
+    }
+    
     
     
     /**
@@ -580,41 +779,4 @@ public class ConsumidorDAO {
         return consumidor;
         
     }
-
-    
-    
-    /**
-     * Método responsável por consultar a quantidade de usuários Consumidores para serem apresentados no painel do usuário Administrador.
-     * @return consumidor
-     * @throws SQLException
-     * @throws ClassNotFoundException 
-     */
-    public Informacoes consultarQuantidade() throws  SQLException, ClassNotFoundException{
-        
-        Informacoes informacoes = new Informacoes();
-
-        try{
-            PreparedStatement pstmt = conexao.getConnection().prepareStatement(CONSULTAR_QUANTIDADE_CONSUMIDORES);
-            pstmt.executeQuery();
-
-            ResultSet rs = pstmt.getResultSet();
-
-            if(rs.next()){
-                informacoes.setQuantidadeUsuariosConsumidores(rs.getInt(1));
-            }else{
-                informacoes = null;
-            }
-            
-            conexao.close();
-            
-        }catch (SQLException e) {
-            informacoes = null;
-            conexao.close();
-            throw new RuntimeException(e);
-        }
-
-        return informacoes;
-
-    }
-    
 }
